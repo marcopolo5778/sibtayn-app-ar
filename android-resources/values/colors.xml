@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- رنگ‌های اپلیکیشن السبطین -->
+    <color name="colorPrimary">#0F4C81</color>
+    <color name="colorPrimaryDark">#0A3559</color>
+    <color name="colorAccent">#FFD700</color>
+    <color name="colorSecondary">#C9A063</color>
+    <color name="colorBackground">#FFFFFF</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorError">#C62828</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorOnSurface">#1A1A2E</color>
+
+    <!-- رنگ اسپلش اسکرین -->
+    <color name="splashBackground">#0F4C81</color>
+    <color name="splashIconColor">#FFD700</color>
+</resources>
