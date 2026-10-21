@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# مؤسسة السبطين عليهما السلام
+# Sitemap: https://your-vercel-url/sitemap.xml

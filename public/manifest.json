@@ -1,0 +1,100 @@
+{
+  "name": "مؤسسة السبطين عليهما السلام",
+  "short_name": "مؤسسة السبطين",
+  "description": "تطبيق مؤسسة السبطين عليهما السلام العالمية - القرآن الكريم، أهل البيت، الأدعية، الأخبار",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0F4C81",
+  "background_color": "#0F4C81",
+  "id": "/",
+  "categories": ["news", "education", "books", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "القرآن الكريم",
+      "short_name": "القرآن",
+      "description": "القرآن الكريم بالصوت والنص",
+      "url": "/?tab=quran",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "أهل البيت عليهم السلام",
+      "short_name": "أهل البيت",
+      "description": "سيرة المعصومين عليهم السلام",
+      "url": "/?tab=ahlelbayt",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "الأدعية والزيارات",
+      "short_name": "الأدعية",
+      "description": "مفاتيح الجنان والأدعية",
+      "url": "/?tab=supplications",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "الأخبار",
+      "short_name": "الأخبار",
+      "description": "أخبار المؤسسة",
+      "url": "/?tab=news",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icons/screenshot.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "الصفحة الرئيسية"
+    }
+  ]
+}
