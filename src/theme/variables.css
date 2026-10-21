@@ -1,0 +1,425 @@
+/* ===== متغیرهای تم اپلیکیشن السبطین ===== */
+:root {
+  /* رنگ اصلی - آبی تیره (رنگ سایت) */
+  --ion-color-primary: #0F4C81;
+  --ion-color-primary-rgb: 15, 76, 129;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #0d4372;
+  --ion-color-primary-tint: #275e8e;
+
+  /* رنگ ثانویه - طلایی */
+  --ion-color-secondary: #C9A063;
+  --ion-color-secondary-rgb: 201, 160, 99;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #b18d57;
+  --ion-color-secondary-tint: #ceaa73;
+
+  /* رنگ تاکیدی - طلایی روشن */
+  --ion-color-tertiary: #FFD700;
+  --ion-color-tertiary-rgb: 255, 215, 0;
+  --ion-color-tertiary-contrast: #000000;
+  --ion-color-tertiary-contrast-rgb: 0, 0, 0;
+  --ion-color-tertiary-shade: #e0bd00;
+  --ion-color-tertiary-tint: #ffdb1a;
+
+  --ion-color-success: #2E7D32;
+  --ion-color-danger: #C62828;
+  --ion-color-warning: #FFC107;
+
+  --ion-color-dark: #1A1A2E;
+  --ion-color-medium: #92949C;
+  --ion-color-light: #F5F7FA;
+
+  --ion-font-family: 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ion-background-color: #FFFFFF;
+  --ion-text-color: #1A1A2E;
+
+  /* ارتفاع‌ها */
+  --toolbar-height: 56px;
+  --tab-bar-height: 60px;
+
+  /* سایه‌ها */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+
+  --ion-border-radius: 12px;
+}
+
+/* تنظیمات RTL */
+html[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+body, ion-content, ion-card, ion-item, ion-label, ion-title,
+h1, h2, h3, h4, h5, h6, p, span, div, button {
+  font-family: 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* ===== فونت متون قرآنی ===== */
+/* کلاس‌های رایج در سایت‌های مذهبی برای آیات قرآنی */
+.quran-text,
+.quran,
+.ayah,
+.aya,
+.bismillah,
+.basmala,
+.arabic-quran,
+[class*="quran"],
+[class*="ayah"],
+[class*="bismillah"] {
+  font-family: 'Amiri', 'Scheherazade New', 'Cairo', serif !important;
+  line-height: 2.1 !important;
+  letter-spacing: 0 !important;
+}
+
+/* پاراگراف‌های طولانی عربی (نه قرآن) */
+.arabic-text {
+  font-family: 'Cairo', sans-serif !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #FFFFFF;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ===== اپلیکیشن اصلی ===== */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  background: #FFFFFF;
+}
+
+/* تولبار بالا */
+.app-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--toolbar-height);
+  padding: 0 12px;
+  background: linear-gradient(135deg, #0F4C81 0%, #0A3559 100%);
+  color: white;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  z-index: 100;
+  padding-top: env(safe-area-inset-top, 0);
+  min-height: calc(var(--toolbar-height) + env(safe-area-inset-top, 0));
+}
+
+.app-toolbar__title {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 8px;
+}
+
+.app-toolbar__btn {
+  background: transparent;
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.app-toolbar__btn:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.app-toolbar__btn ion-icon {
+  font-size: 22px;
+}
+
+/* محتوای WebView */
+.app-webview-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+.app-webview {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #FFFFFF;
+}
+
+/* صفحه بارگذاری */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.loading-overlay__spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid #E0E6ED;
+  border-top-color: #0F4C81;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+
+.loading-overlay__text {
+  color: #0F4C81;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* نوار پایینی - Tab Bar */
+.app-tab-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: var(--tab-bar-height);
+  background: white;
+  border-top: 1px solid #E5EAF0;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  min-height: calc(var(--tab-bar-height) + env(safe-area-inset-bottom, 0));
+  z-index: 100;
+}
+
+.app-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #92949C;
+  font-family: inherit;
+  padding: 4px 2px;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.app-tab ion-icon {
+  font-size: 22px;
+}
+
+.app-tab__label {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.app-tab--active {
+  color: #0F4C81;
+}
+
+.app-tab--active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 3px;
+  background: #FFD700;
+  border-radius: 0 0 3px 3px;
+}
+
+/* مدال اشتراک‌گذاری */
+.share-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  animation: fadeIn 0.2s;
+}
+
+.share-modal__sheet {
+  background: white;
+  width: 100%;
+  border-radius: 16px 16px 0 0;
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
+  animation: slideUp 0.3s;
+}
+
+.share-modal__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1A1A2E;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.share-modal__options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.share-modal__option {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 8px 4px;
+  font-family: inherit;
+  color: #1A1A2E;
+}
+
+.share-modal__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F0F4F8;
+  font-size: 28px;
+}
+
+.share-modal__option--whatsapp .share-modal__icon { background: #25D366; color: white; }
+.share-modal__option--telegram .share-modal__icon { background: #0088CC; color: white; }
+.share-modal__option--copy .share-modal__icon { background: #92949C; color: white; }
+.share-modal__option--more .share-modal__icon { background: #0F4C81; color: white; }
+
+.share-modal__label {
+  font-size: 12px;
+  color: #1A1A2E;
+}
+
+/* نوتیفیکیشن درون‌برنامه‌ای */
+.in-app-notification {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0) + 70px);
+  left: 12px;
+  right: 12px;
+  background: white;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: var(--shadow-lg);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideDown 0.3s;
+  cursor: pointer;
+}
+
+.in-app-notification__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #0F4C81;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 20px;
+}
+
+.in-app-notification__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.in-app-notification__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1A1A2E;
+  margin: 0 0 2px 0;
+}
+
+.in-app-notification__body {
+  font-size: 12px;
+  color: #6B7280;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.in-app-notification__close {
+  background: transparent;
+  border: none;
+  color: #92949C;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* انیمیشن‌ها */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* اسکرول‌بار */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(15, 76, 129, 0.3);
+  border-radius: 3px;
+}
