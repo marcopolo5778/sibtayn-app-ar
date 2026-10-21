@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HijriDateCard } from '@/components/HijriDateCard';
+import { ImageSlider } from '@/components/ImageSlider';
 import { APP_CONFIG } from '@/services/config';
 
 interface HomePageProps {
@@ -70,6 +71,14 @@ const QUICK_ACCESS_ITEMS: QuickAccessItem[] = [
     url: 'https://www.sibtayn.com/ar/index.php?option=com_content&view=article&id=12297&Itemid=911'
   },
   {
+    id: 'mofakera',
+    title: 'المفكرة',
+    subtitle: 'المفكرة الإسلامية',
+    icon: 'calendar-outline',
+    color: '#0F4C81',
+    url: 'https://www.sibtayn.com/ar/index.php?option=com_content&view=category&id=1937'
+  },
+  {
     id: 'children',
     title: 'الأطفال',
     subtitle: 'قسم الأطفال',
@@ -121,6 +130,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigateToTab, onOpenUrl }
       </div>
 
       <HijriDateCard />
+
+      {/* اسلایدر تصاویر */}
+      <ImageSlider onSlideClick={(url, title) => onOpenUrl(url, title)} />
 
       <div className="home-page__section">
         <h3 className="home-page__section-title">
