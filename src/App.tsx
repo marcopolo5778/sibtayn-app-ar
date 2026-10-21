@@ -7,6 +7,7 @@ import { Toolbar } from '@/components/Toolbar';
 import { TabBar } from '@/components/TabBar';
 import { ShareSheet } from '@/components/ShareSheet';
 import { InAppNotification } from '@/components/InAppNotification';
+import { HomePage } from '@/pages/HomePage';
 
 import { APP_CONFIG, STORAGE_KEYS } from '@/services/config';
 import { pushService } from '@/services/pushService';
@@ -21,16 +22,18 @@ setupIonicReact({
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('home');
-  const [currentUrl, setCurrentUrl] = useState<string>(APP_CONFIG.siteUrl);
+  const [currentUrl, setCurrentUrl] = useState<string>(APP_CONFIG.tabs[0].url);
   const [pageTitle, setPageTitle] = useState<string>(APP_CONFIG.app.fullName);
   const [loading, setLoading] = useState<boolean>(true);
   const [canGoBack, setCanGoBack] = useState<boolean>(false);
   const [showShare, setShowShare] = useState<boolean>(false);
   const [inAppNotification, setInAppNotification] = useState<any>(null);
+  // حالت نمایش: 'home' (نیتیو) یا 'webview' (موقع باز کردن لینک از داخل صفحه اصلی)
+  const [viewMode, setViewMode] = useState<'home' | 'webview'>('home');
 
-  const navigationHistory = useRef<string[]>([APP_CONFIG.siteUrl]);
+  const navigationHistory = useRef<string[]>([APP_CONFIG.tabs[0].url]);
   const historyIndex = useRef<number>(0);
-  const webViewKey = useRef<number>(0); // برای reload
+  const webViewKey = useRef<number>(0);
 
   // راه‌اندازی اولیه اپ
   useEffect(() => {
@@ -43,11 +46,15 @@ const App: React.FC = () => {
         if (tabFromUrl && APP_CONFIG.tabs.find(t => t.id === tabFromUrl)) {
           // اگر tab در URL بود، آن را فعال کن
           setActiveTab(tabFromUrl);
-          const tab = APP_CONFIG.tabs.find(t => t.id === tabFromUrl);
-          if (tab) {
-            setCurrentUrl(tab.url);
+          if (tabFromUrl !== 'home') {
+            const tab = APP_CONFIG.tabs.find(t => t.id === tabFromUrl);
+            if (tab) {
+              setCurrentUrl(tab.url);
+              setViewMode('webview');
+            }
+          } else {
+            setViewMode('home');
           }
-          // پاک کردن کوئری پارامتر
           window.history.replaceState({}, '', window.location.pathname);
         } else {
           // استفاده از Capacitor Preferences (در PWA به localStorage fallback می‌شود)
@@ -56,48 +63,51 @@ const App: React.FC = () => {
             const { value: savedTab } = await Preferences.get({ key: STORAGE_KEYS.ACTIVE_TAB });
             if (savedTab) {
               setActiveTab(savedTab);
-              const tab = APP_CONFIG.tabs.find(t => t.id === savedTab);
-              if (tab) {
-                setCurrentUrl(tab.url);
+              if (savedTab !== 'home') {
+                const tab = APP_CONFIG.tabs.find(t => t.id === savedTab);
+                if (tab) {
+                  setCurrentUrl(tab.url);
+                  setViewMode('webview');
+                }
+              } else {
+                setViewMode('home');
               }
             }
           } catch {
-            // fallback به localStorage
             const savedTab = localStorage.getItem(STORAGE_KEYS.ACTIVE_TAB);
             if (savedTab) {
               setActiveTab(savedTab);
-              const tab = APP_CONFIG.tabs.find(t => t.id === savedTab);
-              if (tab) {
-                setCurrentUrl(tab.url);
+              if (savedTab !== 'home') {
+                const tab = APP_CONFIG.tabs.find(t => t.id === savedTab);
+                if (tab) {
+                  setCurrentUrl(tab.url);
+                  setViewMode('webview');
+                }
+              } else {
+                setViewMode('home');
               }
             }
           }
         }
 
-        // تلاش برای تنظیم نوار وضعیت (فقط در Capacitor کار می‌کند)
+        // تلاش برای تنظیم نوار وضعیت
         try {
           const { StatusBar, Style } = await import('@capacitor/status-bar');
           await StatusBar.setStyle({ style: Style.Dark });
           await StatusBar.setBackgroundColor({ color: '#0F4C81' });
-        } catch {
-          // در PWA - با theme-color متا تگ مدیریت می‌شود
-        }
+        } catch {}
 
         // تلاش برای مخفی کردن اسپلش اسکرین
         try {
           const { SplashScreen } = await import('@capacitor/splash-screen');
           await new Promise(resolve => setTimeout(resolve, 500));
           await SplashScreen.hide();
-        } catch {
-          // در PWA اسپلش اسکرین نداریم
-        }
+        } catch {}
 
-        // راه‌اندازی Push Notification (Capacitor یا Web Push)
+        // راه‌اندازی Push Notification
         try {
           await pushService.init();
-        } catch {
-          // در PWA از Web Push API استفاده می‌شود (در main.tsx)
-        }
+        } catch {}
       } catch (error) {
         console.warn('App init error:', error);
       }
@@ -119,17 +129,23 @@ const App: React.FC = () => {
       if (url) {
         addToHistory(url);
         setCurrentUrl(url);
+        setViewMode('webview');
         webViewKey.current += 1;
       }
     };
     window.addEventListener('open-url', onOpenUrl);
 
-    // هندل دکمه Back سخت‌افزاری اندروید (فقط در Capacitor)
+    // هندل دکمه Back سخت‌افزاری اندروید
     let backButtonListener: any;
     try {
       CapacitorApp.addListener('backButton', ({ canGoBack: appCanGoBack }: { canGoBack: boolean }) => {
-        if (historyIndex.current > 0) {
+        // اگر در WebView و تاریخچه داریم، برگرد
+        if (viewMode === 'webview' && historyIndex.current > 0) {
           goBack();
+        } else if (viewMode === 'webview') {
+          // اگر در WebView هستیم اما تاریخچه نداریم، برگرد به خانه
+          setViewMode('home');
+          setActiveTab('home');
         } else if (!appCanGoBack) {
           CapacitorApp.exitApp();
         }
@@ -137,10 +153,12 @@ const App: React.FC = () => {
         backButtonListener = listener;
       });
     } catch {
-      // در PWA - با popstate هندل می‌شود
-      window.addEventListener('popstate', (e) => {
-        if (historyIndex.current > 0) {
+      window.addEventListener('popstate', () => {
+        if (viewMode === 'webview' && historyIndex.current > 0) {
           goBack();
+        } else if (viewMode === 'webview') {
+          setViewMode('home');
+          setActiveTab('home');
         }
       });
     }
@@ -152,7 +170,7 @@ const App: React.FC = () => {
         backButtonListener.remove();
       }
     };
-  }, []);
+  }, [viewMode]);
 
   // مدیریت تغییر تب
   const handleTabChange = useCallback(async (tabId: string) => {
@@ -160,10 +178,21 @@ const App: React.FC = () => {
     if (!tab) return;
 
     setActiveTab(tabId);
-    setCurrentUrl(tab.url);
-    webViewKey.current += 1;
-    navigationHistory.current = [tab.url];
-    historyIndex.current = 0;
+
+    if (tabId === 'home') {
+      // صفحه اصلی نیتیو
+      setViewMode('home');
+      setPageTitle(APP_CONFIG.app.fullName);
+    } else {
+      // سایر تب‌ها از WebView استفاده می‌کنند
+      setViewMode('webview');
+      setCurrentUrl(tab.url);
+      setPageTitle(tab.title);
+      webViewKey.current += 1;
+      navigationHistory.current = [tab.url];
+      historyIndex.current = 0;
+      setCanGoBack(false);
+    }
 
     // ذخیره تب فعال
     try {
@@ -173,21 +202,30 @@ const App: React.FC = () => {
         value: tabId
       });
     } catch {
-      // fallback به localStorage
       localStorage.setItem(STORAGE_KEYS.ACTIVE_TAB, tabId);
     }
   }, []);
 
+  // باز کردن URL از داخل صفحه اصلی (برای کارت‌های دسترسی سریع)
+  const handleOpenUrl = useCallback((url: string, title: string) => {
+    setViewMode('webview');
+    setCurrentUrl(url);
+    setPageTitle(title);
+    webViewKey.current += 1;
+    navigationHistory.current = [url];
+    historyIndex.current = 0;
+    setCanGoBack(false);
+  }, []);
+
   // مدیریت تغییر URL
   const handleUrlChange = useCallback((newUrl: string) => {
-    if (newUrl !== currentUrl) {
+    if (newUrl !== currentUrl && viewMode === 'webview') {
       addToHistory(newUrl);
     }
-  }, [currentUrl]);
+  }, [currentUrl, viewMode]);
 
   // اضافه کردن به تاریخچه
   const addToHistory = useCallback((url: string) => {
-    // حذف تاریخچه بعد از موقعیت فعلی
     navigationHistory.current = navigationHistory.current.slice(0, historyIndex.current + 1);
     navigationHistory.current.push(url);
     historyIndex.current = navigationHistory.current.length - 1;
@@ -197,14 +235,19 @@ const App: React.FC = () => {
 
   // بازگشت به عقب
   const goBack = useCallback(() => {
-    if (historyIndex.current > 0) {
+    if (viewMode === 'webview' && historyIndex.current > 0) {
       historyIndex.current -= 1;
       const prevUrl = navigationHistory.current[historyIndex.current];
       setCurrentUrl(prevUrl);
       webViewKey.current += 1;
       setCanGoBack(historyIndex.current > 0);
+    } else if (viewMode === 'webview') {
+      // برگشت به صفحه اصلی نیتیو
+      setViewMode('home');
+      setActiveTab('home');
+      setPageTitle(APP_CONFIG.app.fullName);
     }
-  }, []);
+  }, [viewMode]);
 
   // بازگشت به خانه
   const goHome = useCallback(() => {
@@ -213,34 +256,48 @@ const App: React.FC = () => {
 
   // تازه‌سازی صفحه
   const refresh = useCallback(() => {
-    webViewKey.current += 1;
-  }, []);
+    if (viewMode === 'webview') {
+      webViewKey.current += 1;
+    }
+    // صفحه اصلی نیتیو نیاز به رفرش ندارد (تاریخ هر بار آپدیت می‌شود)
+  }, [viewMode]);
 
   // اشتراک‌گذاری
   const handleShare = useCallback(() => {
     setShowShare(true);
   }, []);
 
+  // عنوان نوار ابزار بر اساس حالت فعلی
+  const displayTitle = viewMode === 'home' ? APP_CONFIG.app.fullName : pageTitle;
+  const displayCanGoBack = viewMode === 'webview' && (canGoBack || activeTab !== 'home');
+
   return (
     <IonApp>
       <div className="app-container">
         <Toolbar
-          title={pageTitle}
+          title={displayTitle}
           onShare={handleShare}
           onRefresh={refresh}
           onHome={goHome}
           onMenu={() => console.log('menu')}
-          canGoBack={canGoBack}
+          canGoBack={displayCanGoBack}
           onBack={goBack}
         />
 
-        <AppWebView
-          key={webViewKey.current}
-          url={currentUrl}
-          onTitleChange={setPageTitle}
-          onUrlChange={handleUrlChange}
-          onLoadingChange={setLoading}
-        />
+        {viewMode === 'home' ? (
+          <HomePage
+            onNavigateToTab={handleTabChange}
+            onOpenUrl={handleOpenUrl}
+          />
+        ) : (
+          <AppWebView
+            key={webViewKey.current}
+            url={currentUrl}
+            onTitleChange={setPageTitle}
+            onUrlChange={handleUrlChange}
+            onLoadingChange={setLoading}
+          />
+        )}
 
         <TabBar
           activeTab={activeTab}
@@ -248,8 +305,8 @@ const App: React.FC = () => {
         />
 
         <ShareSheet
-          url={currentUrl}
-          title={pageTitle}
+          url={viewMode === 'webview' ? currentUrl : APP_CONFIG.siteUrl}
+          title={displayTitle}
           visible={showShare}
           onClose={() => setShowShare(false)}
         />
@@ -258,7 +315,7 @@ const App: React.FC = () => {
           notification={inAppNotification}
           onClick={(n) => {
             if (n.data?.url) {
-              addToHistory(n.data.url);
+              handleOpenUrl(n.data.url, 'إشعار');
             }
           }}
           onClose={() => setInAppNotification(null)}
