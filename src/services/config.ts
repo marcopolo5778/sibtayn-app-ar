@@ -13,7 +13,8 @@ export const APP_CONFIG = {
 
   /**
    * آدرس‌های تب‌های منوی پایینی
-   * این آدرس‌ها بر اساس منوی اصلی سایت sibtayn.com/ar تنظیم شده‌اند.
+   * این آدرس‌ها از منوی اصلی سایت sibtayn.com/ar استخراج شده‌اند.
+   * سایت از Joomla با SEF URLs استفاده می‌کند، بنابراین آدرس‌های عربی مستقیم کار نمی‌کنند.
    */
   tabs: [
     {
@@ -21,35 +22,35 @@ export const APP_CONFIG = {
       title: 'الرئيسية',
       icon: 'home-outline',
       iconActive: 'home',
-      url: 'https://www.sibtayn.com/ar/'
+      url: 'https://www.sibtayn.com/ar/index.php?option=com_sppagebuilder&view=page&id=3&Itemid=840'
     },
     {
       id: 'quran',
       title: 'القرآن',
       icon: 'book-outline',
       iconActive: 'book',
-      url: 'https://www.sibtayn.com/ar/القرآن-الكريم'
+      url: 'https://www.sibtayn.com/ar/index.php?option=com_content&view=category&id=2026&Itemid=990'
     },
     {
       id: 'ahlelbayt',
       title: 'أهل البيت',
       icon: 'people-outline',
       iconActive: 'people',
-      url: 'https://www.sibtayn.com/ar/أهل-البيت-عليهم-السلام'
+      url: 'https://www.sibtayn.com/ar/index.php?option=com_content&view=article&id=12297&Itemid=910'
     },
     {
       id: 'supplications',
       title: 'الأدعية',
       icon: 'moon-outline',
       iconActive: 'moon',
-      url: 'https://www.sibtayn.com/ar/الأدعية-والزيارات'
+      url: 'https://www.sibtayn.com/ar/index.php?option=com_content&view=category&layout=blog&id=1931&Itemid=3761'
     },
     {
       id: 'news',
       title: 'الأخبار',
       icon: 'newspaper-outline',
       iconActive: 'newspaper',
-      url: 'https://www.sibtayn.com/ar/أخبار'
+      url: 'https://www.sibtayn.com/ar/index.php?option=com_content&view=category&id=1850&Itemid=4508'
     }
   ] as const,
 
